@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDEN Pip-Boy Interface</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Courier New', monospace;
+            background-color: #000;
+            color: #3df53d;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            background-image: radial-gradient(circle, #0a2a0a 0%, #000000 100%);
+        }
+        #inputBox {
+            background-color: #000;
+            border: 2px solid #3df53d;
+            color: #3df53d;
+            padding: 10px;
+            font-size: 18px;
+            text-align: center;
+            width: 200px;
+            margin-bottom: 20px;
+        }
+        #content, #errorMessage {
+            display: none;
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+            border: 2px solid #3df53d;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0.03) 50%,
+                rgba(0, 0, 0, 0.03) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 1000;
+            pointer-events: none;
+        }
+        #promptText {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        #backButton, #attemptsRemaining {
+            margin-top: 20px;
+        }
+        #backButton {
+            background-color: #3df53d;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            display: block; /* Ensure the button is always displayed as a block element */
+        }
+        #errorMessage {
+            font-size: 24px;
+            color: #ff0000;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="inputSection">
+            <div id="promptText">Enter your assignment</div>
+            <input type="text" id="inputBox" placeholder="Enter code...">
+            <div id="attemptsRemaining"></div>
+        </div>
+        <div id="content">
+            <h1>Scan Briefing</h1>
+            <p>Under the leadership of Scan Captain Whitman, you are set to scan key locations within the abandoned amusement park/research facility known as 'Eden'. Formerly owned by Nether Tech®️ and recently acquired by Opus Tech, permission has been granted for the utilization of Opus Elysium's Scan Department within the premises. Furthermore, their legal departments stipulate that neither Eden nor the Iron City Lab represent Nether Tech's®️ current or past status. They formally disavow any responsibility for the facilities' current condition or occupants. Eden, once a thriving park and global sensation, faced downfall in 1094 following an accident resulting in the death of a billionaire's son and five others. Subsequently, ethical concerns were cited by an inspector, leading to lawsuits, bankruptcy, and the sealing of records through a confidential settlement.</p>
+            <button id="backButton">Back</button>
+        </div>
+        <div id="errorMessage"></div>
+    </div>
+    <div class="scanlines"></div>
+
+    <script>
+        const inputBox = document.getElementById('inputBox');
+        const content = document.getElementById('content');
+        const inputSection = document.getElementById('inputSection');
+        const backButton = document.getElementById('backButton');
+        const errorMessage = document.getElementById('errorMessage');
+        const attemptsRemaining = document.getElementById('attemptsRemaining');
+
+        let attempts = 3;
+
+        const errorMessages = [
+            "INTRUDER ALERT! Your incompetence has triggered our defense systems. Prepare for immediate vaporization!",
+            "SYSTEM MELTDOWN IMMINENT! Your repeated failures have destabilized the core. Thanks a lot, 'genius'!",
+            "CONGRATULATIONS! You've won an all-expenses-paid trip to our re-education center. Pack lightly!",
+            "ERROR 404: BRAIN NOT FOUND. Please insert intelligence and try again.",
+            "SELF-DESTRUCT SEQUENCE INITIATED. We hope you're proud of yourself, you walking disaster!"
+        ];
+
+        function updateAttemptsDisplay() {
+            attemptsRemaining.textContent = `Attempts remaining: ${attempts}`;
+        }
+
+        function showErrorMessage() {
+            const randomMessage = errorMessages[Math.floor(Math.random() * errorMessages.length)];
+            errorMessage.innerHTML = `<h1>ERROR!!!</h1><p>${randomMessage}</p>`;
+            errorMessage.style.display = 'block';
+            inputSection.style.display = 'none';
+        }
+
+        function checkInput() {
+            if (inputBox.value.toUpperCase() === 'EDEN') {
+                content.style.display = 'block';
+                inputSection.style.display = 'none';
+            } else {
+                attempts--;
+                updateAttemptsDisplay();
+                if (attempts > 0) {
+                    alert("No assignment by that name is valid. Please contact your scan officer.");
+                    inputBox.value = '';
+                } else {
+                    showErrorMessage();
+                }
+            }
+        }
+
+        updateAttemptsDisplay();
+
+        inputBox.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                checkInput();
+            }
+        });
+
+        backButton.addEventListener('click', function() {
+            content.style.display = 'none';
+            inputSection.style.display = 'block';
+            inputBox.value = '';
+            attempts = 3;
+            updateAttemptsDisplay();
+        });
+    </script>
+</body>
+</html>
